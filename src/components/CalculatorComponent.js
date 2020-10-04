@@ -1,13 +1,13 @@
 import React from 'react';
 import Button from './ButtonComponent'
-import Calculator from './../Calculator'
+import { performCalculation } from './../lib/CalculatorLogic'
 
 class CalculatorComponent extends React.Component 
 {
     constructor(props) {
         super(props)
         this.state = {
-            output: "",
+            output: "0",
             operationsList: [],
             inputCompleted: false
         }
@@ -23,7 +23,7 @@ class CalculatorComponent extends React.Component
         if (this.shouldAddToOutput(event)) 
         {
             let output = this.state.output;
-            if (this.state.inputCompleted) output = "";
+            if (this.state.inputCompleted || output == "0") output = "";
             output = (event === "+/-") ? String(Number(this.state.output) * -1) : (output + event)
             this.setState({ output: output, inputCompleted: false });
         }
@@ -33,13 +33,12 @@ class CalculatorComponent extends React.Component
                 let operations = this.state.operationsList;
                 operations.push(this.state.output);
 
-                const calculator = new Calculator();
-                let output = calculator.performCalculation(operations)
+                let output = performCalculation(operations)
 
                 this.setState({ output: output, operationsList: [] });
             } 
             else if (event === "AC") {
-                this.setState({ output: "", operationsList: [] });
+                this.setState({ output: "0", operationsList: [] });
             }
             else {
                 let operations = this.state.operationsList;
