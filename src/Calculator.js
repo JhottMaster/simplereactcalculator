@@ -18,11 +18,6 @@ class Calculator
         }
         return left;
     }
-
-    buildOperatorList() {
-
-
-    }
 }
 
 export default Calculator;
