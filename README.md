@@ -1,8 +1,8 @@
 # Simple Calculator App
 
-Doesn't really handle edge cases- just a simple React calcualtor app mimicing OSX's calculator to get more exposure to ReactJS.
+Doesn't really handle edge cases- just a simple React calcualtor app mimicking OSX's calculator to get more exposure to ReactJS.
  
-How it will look:
+How it looks:
 
 ![Image of Calculator](https://github.com/JhottMaster/simplereactcalculator/blob/main/calculator_preview.png)
 
