@@ -22,29 +22,33 @@ class CalculatorComponent extends React.Component
     handleButtonEvent(event) {
         if (this.shouldAddToOutput(event)) 
         {
-            let output = this.state.output;
-            if (this.state.inputCompleted || output == "0") output = "";
-            output = (event === "+/-") ? String(Number(this.state.output) * -1) : (output + event)
-            this.setState({ output: output, inputCompleted: false });
+            this.setState((state, props) => {
+                let output = state.output;
+                if (state.inputCompleted || output == "0") output = "";
+                output = (event === "+/-") ? String(Number(output) * -1) : (output + event)
+                return { output: output, inputCompleted: false };
+            });
         }
         else
         {
             if (event === "=") {
-                let operations = this.state.operationsList;
-                operations.push(this.state.output);
-
-                let output = performCalculation(operations)
-
-                this.setState({ output: output, operationsList: [] });
+                this.setState((state, props) => {
+                    let operations = state.operationsList.slice();
+                    operations.push(state.output);
+                    let output = performCalculation(operations);
+                    return { output: output, operationsList: [] }
+                });
             } 
             else if (event === "AC") {
                 this.setState({ output: "0", operationsList: [] });
             }
             else {
-                let operations = this.state.operationsList;
-                operations.push(this.state.output);
-                operations.push(event);
-                this.setState({ inputCompleted: true });
+                this.setState((state, props) => {
+                    let opList = state.operationsList.slice();
+                    opList.push(state.output);
+                    opList.push(event);
+                    return { operationsList: opList, inputCompleted: true };
+                });
             }
         }
     }
