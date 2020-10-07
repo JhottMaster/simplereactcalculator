@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from './ButtonComponent'
-import { performCalculation } from './../lib/CalculatorLogic'
+import { performCalculation, shouldAddToOutput, isOperator } from './../lib/CalculatorLogic'
 
 class CalculatorComponent extends React.Component 
 {
@@ -12,47 +12,49 @@ class CalculatorComponent extends React.Component
             inputCompleted: false
         }
     }
-    
-    charIsNumber(c) {
-        return !isNaN(parseInt(c, 10));
-    }
 
-    shouldAddToOutput(c) { return c === "+/-"  || c === '.' || this.charIsNumber(c) }
- 
     handleButtonEvent(event) {
-        if (this.shouldAddToOutput(event)) 
-        {
-            this.setState((state, props) => {
-                let output = state.output;
-                if (state.inputCompleted || output == "0") output = "";
-                output = (event === "+/-") ? String(Number(output) * -1) : (output + event)
-                return { output: output, inputCompleted: false };
-            });
-        }
-        else
-        {
-            if (event === "=") {
-                this.setState((state, props) => {
-                    let operations = state.operationsList.slice();
-                    operations.push(state.output);
-                    let output = performCalculation(operations);
-                    return { output: output, operationsList: [] }
-                });
-            } 
-            else if (event === "AC") {
-                this.setState({ output: "0", operationsList: [] });
-            }
-            else {
-                this.setState((state, props) => {
-                    let opList = state.operationsList.slice();
-                    opList.push(state.output);
-                    opList.push(event);
-                    return { operationsList: opList, inputCompleted: true };
-                });
-            }
+        if (shouldAddToOutput(event)) {
+            this.handleNumericInput(event);
+        } else {
+            if (event === "=") { this.handleEqualsFunction(); }
+            else if (event === "AC") { this.handleReset(); }
+            else if (isOperator(event)) { this.handleOperator(event); }
+            else { throw "Invalid operator!"; } 
         }
     }
 
+    handleNumericInput(event) {
+        this.setState((state, props) => {
+            let output = state.output;
+            if (state.inputCompleted || output == "0") output = "";
+            output = (event === "+/-") ? String(Number(output) * -1) : (output + event)
+            return { output: output, inputCompleted: false };
+        });
+    }
+
+    handleEqualsFunction() {
+        this.setState((state, props) => {
+            let operations = state.operationsList.slice();
+            operations.push(state.output);
+            let output = performCalculation(operations);
+            return { output: output, operationsList: [] }
+        });
+    }
+
+    handleReset() {
+        this.setState({ output: "0", operationsList: [] });
+    }
+
+    handleOperator(operator) {
+        this.setState((state, props) => {
+            let opList = state.operationsList.slice();
+            opList.push(state.output);
+            opList.push(operator);
+            return { operationsList: opList, inputCompleted: true };
+        });
+    }
+    
     render() {
         return (
             <div className="calculator-container">
@@ -67,25 +69,25 @@ class CalculatorComponent extends React.Component
                         <Button text="AC" clickHandler={(event) => this.handleButtonEvent(event)} className="special-button"/>
                         <Button text="+/-" clickHandler={(event) => this.handleButtonEvent(event)} className="special-button"/>
                         <Button text="%" clickHandler={(event) => this.handleButtonEvent(event)} className="special-button"/>
-                        <Button text="÷" clickHandler={(event) => this.handleButtonEvent(event)} className="operator-button"/>
+                        <Button text="÷" clickHandler={(event) => this.handleButtonEvent(event)} />
                     </div>
                     <div className="calculator-row">
                         <Button text="1" clickHandler={(event) => this.handleButtonEvent(event)} />
                         <Button text="2" clickHandler={(event) => this.handleButtonEvent(event)} />
                         <Button text="3" clickHandler={(event) => this.handleButtonEvent(event)} />
-                        <Button text="x" clickHandler={(event) => this.handleButtonEvent(event)} className="operator-button" />
+                        <Button text="x" clickHandler={(event) => this.handleButtonEvent(event)} />
                     </div>
                     <div className="calculator-row">
                         <Button text="4" clickHandler={(event) => this.handleButtonEvent(event)} />
                         <Button text="5" clickHandler={(event) => this.handleButtonEvent(event)} />
                         <Button text="6" clickHandler={(event) => this.handleButtonEvent(event)} />
-                        <Button text="-" clickHandler={(event) => this.handleButtonEvent(event)} className="operator-button" />
+                        <Button text="-" clickHandler={(event) => this.handleButtonEvent(event)} />
                     </div>
                     <div className="calculator-row">
                         <Button text="7" clickHandler={(event) => this.handleButtonEvent(event)} />
                         <Button text="8" clickHandler={(event) => this.handleButtonEvent(event)} />
                         <Button text="9" clickHandler={(event) => this.handleButtonEvent(event)} />
-                        <Button text="+" clickHandler={(event) => this.handleButtonEvent(event)}  className="operator-button"/>
+                        <Button text="+" clickHandler={(event) => this.handleButtonEvent(event)} />
                     </div>
                     <div className="calculator-row">
                         <Button text="0" width="91" clickHandler={(event) => this.handleButtonEvent(event)}  borderBottom="left" />

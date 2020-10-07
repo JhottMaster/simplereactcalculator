@@ -1,5 +1,6 @@
 import React from 'react';
-import './../index.css'
+import './../index.css';
+import { isOperator } from './../lib/CalculatorLogic';
 
 class ButtonComponent extends React.Component 
 {
@@ -9,9 +10,11 @@ class ButtonComponent extends React.Component
         let styleProps = {width: width, height: size };
         if (this.props.borderBottom === "right") { styleProps = { ...styleProps, borderBottomRightRadius: "5px" }; }
         if (this.props.borderBottom === "left") { styleProps = { ...styleProps, borderBottomLeftRadius: "5px" }; }
+        let classes = this.props.className || ''
+        classes += isOperator(this.props.text) ? ' operator-button' : ''
 
         return (
-            <div className={"calculator-key " + this.props.className } style={styleProps} 
+            <div className={"calculator-key " + classes } style={styleProps} 
                 onClick={() => this.props.clickHandler(this.props.text)}>
 
                 {this.props.text}
